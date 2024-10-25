@@ -7,6 +7,7 @@ public class BarraInfo extends JPanel {
     private JLabel labelMeleMangiate;
     private JLabel title;
     private JLabel recordLabel;
+    private JLabel difficoltaLabel;
     private int record;
     private ImageIcon mela;
     private ImageIcon coppa;
@@ -30,27 +31,30 @@ public class BarraInfo extends JPanel {
         labelMeleMangiate = new JLabel("0");
         labelMeleMangiate.setIcon(mela);
         labelMeleMangiate.setFont(new Font("Arial", Font.BOLD, 18));
-        labelMeleMangiate.setHorizontalAlignment(SwingConstants.CENTER);
-        labelMeleMangiate.setVerticalAlignment(SwingConstants.BOTTOM);
         add(labelMeleMangiate, BorderLayout.WEST);
 
         recordLabel = new JLabel(" 0");
         recordLabel.setIcon(coppa);
         recordLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        recordLabel.setHorizontalAlignment(SwingConstants.CENTER);
         add(recordLabel, BorderLayout.EAST);
+
+        difficoltaLabel = new JLabel();
+        difficoltaLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        difficoltaLabel.setText("");
+        difficoltaLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        add(difficoltaLabel, BorderLayout.CENTER);
 
         record = 0;
     }
 
-    public void aggiornaMeleMangiate(int meleMangiate) {
+    public void aggiornaInfo(int meleMangiate, String difficolta) {
         labelMeleMangiate.setIcon(mela);
         labelMeleMangiate.setText(" " + meleMangiate);
+        difficoltaLabel.setText(difficolta);
         if (meleMangiate > record) {
             record = meleMangiate;
             recordLabel.setIcon(coppa);
             recordLabel.setText(" " + record);
         }
-
     }
 }

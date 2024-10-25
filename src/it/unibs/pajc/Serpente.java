@@ -12,18 +12,20 @@ public class Serpente {
     private int meleMangiate;
     private long ultimoCambio = 0;
     private static final long DELAY = 100;
+    private boolean modalitaPacifica;
 
     public enum Direction {
         SU, GIU, SINISTRA, DESTRA
     }
 
-    public Serpente(int xIniziale, int yIniziale, int larghezza, int altezza) {
+    public Serpente(int xIniziale, int yIniziale, int larghezza, int altezza, boolean modalitaPacifica) {
         corpo = new LinkedList<>();
         corpo.add(new Point(xIniziale, yIniziale));
         lunghezza = 4;
         direzione = Direction.DESTRA;
         mela = new Mela(larghezza, altezza);
         meleMangiate = 0;
+        this.modalitaPacifica = modalitaPacifica;
     }
 
     public void disegna(Graphics g) {
@@ -78,6 +80,20 @@ public class Serpente {
 
     public boolean controllaCollisione(int larghezza, int altezza) {
         Point testa = corpo.getFirst();
+
+        if (modalitaPacifica) {
+            if (testa.x < 0) {
+                testa.x = (larghezza / DIMENSIONE_CELLA) - 1;
+            } else if (testa.x >= larghezza / DIMENSIONE_CELLA) {
+                testa.x = 0;
+            } else if (testa.y < 0) {
+                testa.y = (altezza / DIMENSIONE_CELLA) - 1;
+            } else if (testa.y >= altezza / DIMENSIONE_CELLA) {
+                testa.y = 0;
+            }
+            corpo.set(0, testa);
+            return false;
+        }
 
         if (testa.x < 0 || testa.x >= larghezza / DIMENSIONE_CELLA || testa.y < 0 || testa.y >= altezza / DIMENSIONE_CELLA) {
             return true;

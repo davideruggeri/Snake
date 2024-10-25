@@ -11,13 +11,18 @@ public class Pannello extends JPanel {
     private boolean emosso;
     private BarraInfo barraInfo;
     private int velocita;
+    private int scelta;
+    private String[] opzioni = {"Tartaruga", "Serpente", "Coniglio"};
+    private boolean modalitaPacifica;
 
-    public Pannello() {
+    public Pannello(boolean modalitaPacifica) {
+        this.modalitaPacifica = modalitaPacifica;
         setPreferredSize(new Dimension(500, 500));
-        serpente = new Serpente(5, 5, 500, 500);
+        serpente = new Serpente(5, 5, 500, 500, modalitaPacifica);
         velocita = 0;
 
         setFocusable(true);
+        scegliVelocita();
         inizialize();
     }
 
@@ -34,6 +39,7 @@ public class Pannello extends JPanel {
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
+
                 if (!emosso) {
                     timer.start();
                     emosso = true;
@@ -75,8 +81,8 @@ public class Pannello extends JPanel {
 
     private void scegliVelocita(){
         String messaggio = "Con quale livello di velocità vuoi giocare?";
-        String[] opzioni = {"Tartaruga", "Serpente", "Coniglio"};
-        int scelta = JOptionPane.showOptionDialog(this, messaggio, "Difficoltà", JOptionPane.DEFAULT_OPTION,
+
+        scelta = JOptionPane.showOptionDialog(this, messaggio, "Difficoltà", JOptionPane.DEFAULT_OPTION,
                 JOptionPane.INFORMATION_MESSAGE, null, opzioni, opzioni[0]);
 
         if (scelta == -1) {
@@ -99,12 +105,11 @@ public class Pannello extends JPanel {
     }
 
     private void finePartita() {
-        scegliVelocita();
 
         timer = new Timer(velocita, e -> {
             serpente.muovi();
 
-            barraInfo.aggiornaMeleMangiate(serpente.getMeleMangiate());
+            barraInfo.aggiornaInfo(serpente.getMeleMangiate(), opzioni[scelta]);
 
             if (serpente.controllaCollisione(getWidth(), getHeight())) {
                 timer.stop();
@@ -112,7 +117,7 @@ public class Pannello extends JPanel {
                         "Hai perso! Vuoi ricominciare la partita?", "Fine partita", JOptionPane.YES_NO_OPTION);
 
                 if (scelta == JOptionPane.YES_OPTION) {
-                    serpente = new Serpente(5, 5, getWidth(), getHeight());
+                    serpente = new Serpente(5, 5, getWidth(), getHeight(), modalitaPacifica);
                     emosso = false;
                     repaint();
                 } else {
