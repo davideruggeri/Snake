@@ -1,5 +1,6 @@
 package it.unibs.pajc;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.LinkedList;
 
@@ -13,6 +14,7 @@ public class Serpente {
     private long ultimoCambio = 0;
     private static final long DELAY = 100;
     private boolean modalitaPacifica;
+    private ImageIcon testa;
 
     public enum Direction {
         SU, GIU, SINISTRA, DESTRA
@@ -27,10 +29,46 @@ public class Serpente {
         meleMangiate = 0;
         this.modalitaPacifica = modalitaPacifica;
     }
-
+    private void disegnaTesta(){
+        ImageIcon testaOriginal = new ImageIcon(getClass().getResource("/images/snake.png"));
+        Image ridemensioneTesta = testaOriginal.getImage().getScaledInstance(20,20, Image.SCALE_SMOOTH);
+        testa = new ImageIcon(ridemensioneTesta);
+    }
     public void disegna(Graphics g) {
-        g.setColor(Color.BLUE);
-        g.fillOval(corpo.getFirst().x * DIMENSIONE_CELLA, corpo.getFirst().y * DIMENSIONE_CELLA, DIMENSIONE_CELLA, DIMENSIONE_CELLA);
+        Graphics2D g2d = (Graphics2D) g;
+        disegnaTesta();
+
+        double angolo = Math.toRadians(90);
+        switch (direzione) {
+            case SU -> angolo = Math.toRadians(180);
+            case GIU -> angolo = Math.toRadians(0);
+            case SINISTRA -> angolo = Math.toRadians(90);
+            case DESTRA -> angolo = Math.toRadians(-90);
+        }
+
+
+        g2d.translate(corpo.getFirst().x * DIMENSIONE_CELLA + DIMENSIONE_CELLA / 2,
+                corpo.getFirst().y * DIMENSIONE_CELLA + DIMENSIONE_CELLA / 2);
+        g2d.rotate(angolo);
+        g2d.drawImage(testa.getImage(), -DIMENSIONE_CELLA / 2, -DIMENSIONE_CELLA / 2, DIMENSIONE_CELLA, DIMENSIONE_CELLA, null);
+
+        g2d.setTransform(g2d.getDeviceConfiguration().getDefaultTransform());
+
+        g2d.setColor(Color.BLUE);
+        for (int i = 1; i < corpo.size(); i++) {
+            Point p = corpo.get(i);
+            g2d.fillRect(p.x * DIMENSIONE_CELLA, p.y * DIMENSIONE_CELLA, DIMENSIONE_CELLA, DIMENSIONE_CELLA);
+        }
+
+        mela.disegna(g);
+    }
+    /*
+    public void disegna(Graphics g) {
+        //g.setColor(Color.BLUE);
+        //g.fillOval(corpo.getFirst().x * DIMENSIONE_CELLA, corpo.getFirst().y * DIMENSIONE_CELLA, DIMENSIONE_CELLA, DIMENSIONE_CELLA);
+
+        disegnaTesta();
+        g.drawImage(testa.getImage(), corpo.getFirst().x * DIMENSIONE_CELLA, corpo.getFirst().y * DIMENSIONE_CELLA, null    );
 
         g.setColor(Color.BLUE);
         for (int i = 1; i < corpo.size(); i++) {
@@ -39,7 +77,7 @@ public class Serpente {
         }
 
         mela.disegna(g);
-    }
+    }*/
 
     public void muovi() {
         Point testa = corpo.getFirst();
@@ -54,7 +92,7 @@ public class Serpente {
 
         if (mela.mangiata(this)) {
             aumentaLunghezza();
-            mela.posizionaRandom(500, 500);
+            mela.posizionaRandom(500, 500, this);
         }
 
         corpo.addFirst(nuovaTesta);
