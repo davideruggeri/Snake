@@ -7,13 +7,19 @@ public class SnakeApp {
     public static void main(String[] args) {
         JFrame finestra = new JFrame();
         Pannello pannello = new Pannello();
+        BarraInfo barraInfo = new BarraInfo();
 
-        finestra.setSize(510, 533);
         finestra.setLayout(new BorderLayout());
+
         finestra.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        finestra.setLocationRelativeTo(null);
         finestra.setTitle("Snake Game");
-        finestra.add(pannello);
+
+        finestra.add(pannello, BorderLayout.CENTER);
+        finestra.add(barraInfo, BorderLayout.NORTH);
+
+        pannello.setBarraInfo(barraInfo);
+
+        finestra.pack();
         finestra.setResizable(false);
         finestra.setVisible(true);
     }

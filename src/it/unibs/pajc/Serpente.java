@@ -9,6 +9,9 @@ public class Serpente {
     private int lunghezza;
     private static final int DIMENSIONE_CELLA = 20;
     private Mela mela;
+    private int meleMangiate;
+    private long ultimoCambio = 0;
+    private static final long DELAY = 100;
 
     public enum Direction {
         SU, GIU, SINISTRA, DESTRA
@@ -20,6 +23,7 @@ public class Serpente {
         lunghezza = 4;
         direzione = Direction.DESTRA;
         mela = new Mela(larghezza, altezza);
+        meleMangiate = 0;
     }
 
     public void disegna(Graphics g) {
@@ -46,20 +50,24 @@ public class Serpente {
             case DESTRA -> nuovaTesta.translate(1, 0);
         }
 
-        // Controlla se il serpente ha mangiato la mela
         if (mela.mangiata(this)) {
-            aumentaLunghezza(); // Aumenta la lunghezza se ha mangiato la mela
-            mela.posizionaRandom(500, 500); // Riposiziona la mela
+            aumentaLunghezza();
+            mela.posizionaRandom(500, 500);
         }
 
-        corpo.addFirst(nuovaTesta); // Aggiunge la nuova testa
-        // Rimuovi l'ultima parte del corpo se non si mangia la mela
+        corpo.addFirst(nuovaTesta);
+
         if (corpo.size() > lunghezza) {
             corpo.removeLast();
         }
     }
 
     public void cambiaDirezione(Direction nuovaDirezione) {
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - ultimoCambio < DELAY) {
+            return;
+        }
+
         if ((direzione == Direction.SU && nuovaDirezione != Direction.GIU) ||
                 (direzione == Direction.GIU && nuovaDirezione != Direction.SU) ||
                 (direzione == Direction.SINISTRA && nuovaDirezione != Direction.DESTRA) ||
@@ -71,7 +79,7 @@ public class Serpente {
     public boolean controllaCollisione(int larghezza, int altezza) {
         Point testa = corpo.getFirst();
 
-        if (testa.x < 0 || testa.x > larghezza / DIMENSIONE_CELLA || testa.y < 0 || testa.y > altezza / DIMENSIONE_CELLA) {
+        if (testa.x < 0 || testa.x >= larghezza / DIMENSIONE_CELLA || testa.y < 0 || testa.y >= altezza / DIMENSIONE_CELLA) {
             return true;
         }
 
@@ -83,10 +91,14 @@ public class Serpente {
 
         return false;
     }
-
+    public int getMeleMangiate () {
+        return meleMangiate;
+    }
 
     public void aumentaLunghezza() {
         lunghezza++;
+        meleMangiate++;
+
     }
 
     public Point getTesta() {
